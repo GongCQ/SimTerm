@@ -2,6 +2,7 @@ import gensim as gs
 import pymongo as pm
 import datetime as dt
 import Public
+import os
 
 class Bow:
     def __init__(self, docList, termQuant, userDictSet = None):
@@ -57,6 +58,20 @@ class Bow:
     def GetVocabSize(self):
         return len(self.termToId.keys())
 
+    def SaveIdTerm(self, path):
+        fileIdToTerm = open(os.path.join(path, 'idToTerm.txt'), 'w')
+        for id, term in self.idToTerm.items():
+            fileIdToTerm.write(str(id) + ',' + str(term) + os.linesep)
+        fileIdToTerm.flush()
+        fileIdToTerm.close()
+
+        fileTermToId = open(os.path.join(path, 'termToId.txt'), 'w')
+        for term, id in self.termToId.items():
+            fileTermToId.write(str(term) + ',' + str(id) + os.linesep)
+        fileTermToId.flush()
+        fileTermToId.close()
+
+
 
 class Document:
     def __init__(self, doc):
@@ -66,8 +81,8 @@ class Document:
         self.title = doc['title']
         self.key = doc['_id']
 
-userDictPath = 'E:\TEMP\SimTerm\dict.txt'
-mongoConnStr = 'mongodb://gongcq:gcq@192.168.7.83:27017/text'
+userDictPath = 'dict'
+mongoConnStr = 'mongodb://gongcq:gcq@localhost:27017/text'
 termQuant = 0.3
 days = 30
 
@@ -83,5 +98,6 @@ for doc in docs:
     document = Document(doc)
     docList.append(document)
 bow = Bow(docList, termQuant, userDictSet)
+bow.SaveIdTerm('.')
 
 debug = 0

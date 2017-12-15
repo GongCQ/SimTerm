@@ -112,27 +112,28 @@ for s in shufSeq:
     batch[1].append(samples[s][1])
 
 model = SimTerm(bow.GetVocabSize(), contextLen - 1, batchSize=None, wordEmbLen=100, hiddenLen=500, learnRate=1)
-for b in range(len(batchs)):
-    batch = batchs[b]
-    cost, output, objOneHot = model.Train(batch[0], batch[1])
-    print(str(dt.datetime.now()) +
-          ', batch=' + str(b) + '/' + str(len(batchs)) +
-          ', cost=' + str(np.exp(cost)))
-    if b % 500 == 0:
-        path = os.path.join('.', 'modelFile', 'model' + str(b) + '.csv')
-        model.SaveEmbTable(path)
-        print('=== success to save model in ' + path)
-    for i in range(batchSize):
-        outputSortIndex = np.argsort(-output[i])
-        objOneHotSortIndex = np.argsort(-objOneHot[i])
-        # print('output: ' + str(output[i][outputSortIndex[0 : 10]]))
-        # print('objVal: ' + str(objOneHot[i][objOneHotSortIndex[0 : 10]]))
-        objId = objOneHotSortIndex[0]
-        objIndexInOutputSort = None
-        for n in range(len(outputSortIndex)):
-            if objId == outputSortIndex[n]:
-                objIndexInOutputSort = n
-                break
-        # print(str(objId) + ': ' + str(objIndexInOutputSort) + '/' + str(bow.GetVocabSize()))
-        ddd = 0
-    ddd = 0
+for epoch in range(10):
+    for b in range(len(batchs)):
+        batch = batchs[b]
+        cost, output, objOneHot = model.Train(batch[0], batch[1])
+        print(str(dt.datetime.now()) +
+              ', epoch=' + str(epoch) +
+              ', batch=' + str(b) + '/' + str(len(batchs)) +
+              ', cost=' + str(np.exp(cost)))
+        # if b % 2000 == 0:
+        #     path = os.path.join('.', 'modelFile', 'model_' + str(epoch) + '_' + str(b) + '.csv')
+        #     model.SaveEmbTable(path)
+        #     print('=== success to save model in ' + path)
+    path = os.path.join('.', 'modelFile', 'model_' + str(epoch) + '_' + str(len(batchs)) + '.csv')
+    model.SaveEmbTable(path)
+    print('=== success to save model in ' + path)
+        # for i in range(batchSize):
+        #     outputSortIndex = np.argsort(-output[i])
+        #     objOneHotSortIndex = np.argsort(-objOneHot[i])
+        #     objId = objOneHotSortIndex[0]
+        #     objIndexInOutputSort = None
+        #     for n in range(len(outputSortIndex)):
+        #         if objId == outputSortIndex[n]:
+        #             objIndexInOutputSort = n
+        #             break
+        #     print(str(objId) + ': ' + str(objIndexInOutputSort) + '/' + str(bow.GetVocabSize()))
